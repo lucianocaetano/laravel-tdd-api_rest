@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateRestaurantRequest;
 use App\Http\Resources\RestaurantResource;
 use App\Models\Restaurant;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class RestaurantController extends Controller
 {
@@ -15,7 +16,6 @@ class RestaurantController extends Controller
      */
     public function index()
     {
-        //
     }
 
     /**
@@ -30,7 +30,7 @@ class RestaurantController extends Controller
         return jsonResponse(data: [
             "restaurant" => RestaurantResource::make($restaurant)
         ], message: "OK", status: 201);
-        
+
     }
 
     /**
@@ -38,7 +38,7 @@ class RestaurantController extends Controller
      */
     public function show(Restaurant $restaurant)
     {
-        //
+        Gate::authorize("view", $restaurant);
     }
 
     /**
@@ -46,7 +46,17 @@ class RestaurantController extends Controller
      */
     public function update(UpdateRestaurantRequest $request, Restaurant $restaurant)
     {
-        //
+        Gate::authorize("update", $restaurant);
+
+        $data = $request->validated();
+
+        $restaurant->update($data);
+
+        return jsonResponse(data: [
+            "restaurant" => RestaurantResource::make($restaurant)
+        ], message: "OK", status: 201);
+
+
     }
 
     /**
@@ -54,6 +64,6 @@ class RestaurantController extends Controller
      */
     public function destroy(Restaurant $restaurant)
     {
-        //
+        Gate::authorize("delete", $restaurant);
     }
 }

@@ -15,4 +15,13 @@ class Restaurant extends Model
         "slug",
         "user_id"
     ];
+
+    function getRouteKeyName()
+    {
+        return "slug";
+    }
+
+    function user () {
+        return $this->belongsTo(User::class);
+    }
 }

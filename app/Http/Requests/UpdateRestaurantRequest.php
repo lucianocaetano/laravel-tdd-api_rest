@@ -11,7 +11,7 @@ class UpdateRestaurantRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,17 @@ class UpdateRestaurantRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => ['nullable', 'required_without_all:description', "string", "max:50"],
+            'description' => ['nullable', 'required_without_all:name', "string", "max:50"],
+            'slug' => ["string", "required"],
         ];
+    }
+
+    public function prepareForValidation() {
+        if($this->name){
+            $this->merge([
+             "slug" => str($this->name . uniqid())->slug()->value()
+            ]);
+        }
     }
 }
