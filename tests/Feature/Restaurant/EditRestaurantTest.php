@@ -26,8 +26,8 @@ class EditRestaurantTest extends TestCase
     {
         $user = User::first();
         $restaurant = Restaurant::first();
-        $response = $this->apiAs($user, "put", $this->baseAPI . '/restaurant' . $restaurant->id, $this->data);
-    
+        $response = $this->apiAs($user, "put", $this->baseAPI . '/restaurant' . $restaurant->slug, $this->data);
+
         $response->assertJsonFragment(["message" => "OK"]);
         $response->assertJsonStructure(["message", "errors", "data" => ["restaurant" => ["id", "name", "description", "slug", "user_id"]]]);
         $response->assertStatus(201);

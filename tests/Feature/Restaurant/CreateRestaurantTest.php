@@ -25,7 +25,7 @@ class RestaurantTest extends TestCase
     {
         $user = User::first();
         $response = $this->apiAs($user, "post", $this->baseAPI . '/restaurant', $this->data);
-    
+
         $response->assertJsonFragment(["message" => "OK"]);
         $response->assertJsonStructure(["message", "errors", "data" => ["restaurant" => ["id", "name", "description", "slug", "user_id"]]]);
         $response->assertStatus(201);

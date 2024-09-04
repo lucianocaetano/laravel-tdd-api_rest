@@ -20,7 +20,8 @@ class RestaurantFactory extends Factory
         return [
             'name' => $this->faker->name,
             'description' => $this->faker->text(200),
-            'slug' => Str::slug($this->faker->name),
+            'slug' => str($this->faker->name)->slug()->value(),
             'user_id' =>  User::factory(10)
         ];
     }
+}
