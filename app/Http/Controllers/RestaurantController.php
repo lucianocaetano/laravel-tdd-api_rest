@@ -16,6 +16,12 @@ class RestaurantController extends Controller
      */
     public function index()
     {
+        $restaurants = Auth::user()->restaurants;
+
+        return jsonResponse(data: [
+            "restaurants" => RestaurantResource::collection($restaurants)
+        ], message: "OK");
+
     }
 
     /**
@@ -39,6 +45,10 @@ class RestaurantController extends Controller
     public function show(Restaurant $restaurant)
     {
         Gate::authorize("view", $restaurant);
+
+        return jsonResponse(data: [
+            "restaurant" => RestaurantResource::make($restaurant)
+        ], message: "OK");
     }
 
     /**
@@ -54,9 +64,7 @@ class RestaurantController extends Controller
 
         return jsonResponse(data: [
             "restaurant" => RestaurantResource::make($restaurant)
-        ], message: "OK", status: 201);
-
-
+        ], message: "OK");
     }
 
     /**
@@ -65,5 +73,9 @@ class RestaurantController extends Controller
     public function destroy(Restaurant $restaurant)
     {
         Gate::authorize("delete", $restaurant);
+
+        $restaurant->delete();
+
+        return jsonResponse(message: "OK");
     }
 }
