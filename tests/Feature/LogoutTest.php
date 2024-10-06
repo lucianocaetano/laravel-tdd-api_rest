@@ -21,6 +21,7 @@ class LogoutTest extends TestCase
         $this->seed(UserSeeder::class);
     }
     protected $baseAPI = "api/v1/";
+
     public function test_logout_user(): void
     {
         $user = User::first();

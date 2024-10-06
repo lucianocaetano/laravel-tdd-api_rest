@@ -2,31 +2,28 @@
 
 namespace Database\Factories;
 
-use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Restaurant>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Plate>
  */
-class RestaurantFactory extends Factory
+class PlateFactory extends Factory
 {
     /**
      * Define the model's default state.
      *
      * @return array<string, mixed>
-     **/
-
+     */
 
     public function definition(): array
     {
-        $name = $this->faker->name;
-
+        $name = fake()->words(2, true);
         return [
+            'price' => fake()->numberBetween(100, 1000),
             'name' => $name,
-            'description' => $this->faker->text(200),
+            'description' => fake()->text,
             'slug' => Str::slug($name . ' ' . uniqid()),
-            'user_id' =>  User::factory()
         ];
     }
 }

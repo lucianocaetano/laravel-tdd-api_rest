@@ -21,11 +21,11 @@ class ListRestaurantTest extends TestCase
     function setUp(): void
     {
         parent::setUp();
+
         $this->seed(UserSeeder::class);
 
-        User::factory()->create(["name" => "luciano"]);
         Restaurant::factory(5)->create([
-            "user_id" => 1 // es el usuario que se creo con los seeder
+            "user_id" => User::first()->id // es el usuario que se creo con los seeder
         ]);
     }
 
@@ -36,15 +36,21 @@ class ListRestaurantTest extends TestCase
         $user = User::where(["name" => "mauro"])->first();
         $restaurants = $user->restaurants;
 
-        $response = $this->apiAs($user, "get", $this->baseAPI . '/restaurant/');
+        $response = $this->apiAs($user, "get", $this->baseAPI . '/restaurant');
 
         $response->assertStatus(200);
         $response->assertJsonStructure(["message", "errors", "data"]);
         $response->assertJsonFragment(["errors" => null]);
         $response->assertJsonFragment(["message" => "OK"]);
         $response->assertJsonFragment(["data" => [
-                "restaurants" => RestaurantResource::collection($restaurants)->resolve()
+                "restaurants" => RestaurantResource::collection($restaurants)->resolve(),
+                "count" => 5,
+                "current_page" => 1,
+                "last_page" => 1,
+                "per_page" => 15,
+                "total" => 5
             ]
         ]);
     }
+
 }

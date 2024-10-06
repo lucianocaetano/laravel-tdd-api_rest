@@ -25,7 +25,7 @@ class ShowRestaurantTest extends TestCase
         $this->seed([UserSeeder::class, RestaurantSeeder::class]);
 
         Restaurant::factory()->create([
-            "user_id" => 1 // este es el usuario creado por el UserSeeder::class
+            "user_id" => User::first()->id
         ]);
     }
 

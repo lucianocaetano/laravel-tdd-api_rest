@@ -3,6 +3,7 @@
 namespace Tests\Feature\Restaurant;
 
 use App\Models\Restaurant;
+use App\Models\User;
 use Database\Seeders\UserSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -36,13 +37,12 @@ class DeleteRestaurantTest extends TestCase
         $response->assertJsonFragment(["message" => "OK"]);
         $response->assertJsonStructure(["message", "errors", "data"]);
         $this->assertDatabaseCount("restaurants", 0);
-
     }
 
     public function test_delete_not_my_restaurant(): void
     {
         $restaurant = Restaurant::first();
-        $user = $restaurant->user;
+        $user = User::where(["email" => "lucianocaetano@gmail.com"])->first();
 
         $response = $this->apiAs($user, "delete", $this->baseAPI . '/restaurant/' . $restaurant->slug);
 

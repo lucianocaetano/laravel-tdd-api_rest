@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\MenuController;
+use App\Http\Controllers\PlateController;
 use App\Http\Controllers\RestaurantController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -23,6 +25,8 @@ Route::middleware(["auth"])->group(function () {
 
     // api restaurant
     Route::apiResource("/restaurant", RestaurantController::class);
+    Route::apiResource("/{restaurant:slug}/plate", PlateController::class);
+    Route::apiResource("/{restaurant:slug}/menu", MenuController::class)->except(["index"]);
 });
 
 

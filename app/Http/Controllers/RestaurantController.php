@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreRestaurantRequest;
 use App\Http\Requests\UpdateRestaurantRequest;
+use App\Http\Resources\RestaurantCollection;
 use App\Http\Resources\RestaurantResource;
 use App\Models\Restaurant;
 use Illuminate\Support\Facades\Auth;
@@ -16,12 +17,9 @@ class RestaurantController extends Controller
      */
     public function index()
     {
-        $restaurants = Auth::user()->restaurants;
+        $restaurants = Auth::user()->restaurants()->paginate();
 
-        return jsonResponse(data: [
-            "restaurants" => RestaurantResource::collection($restaurants)
-        ], message: "OK");
-
+        return jsonResponse(data: new RestaurantCollection($restaurants), message: "OK");
     }
 
     /**
