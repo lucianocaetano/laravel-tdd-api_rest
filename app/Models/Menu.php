@@ -25,4 +25,8 @@ class Menu extends Model
     {
         return $this->belongsTo(Restaurant::class);
     }
+
+    function plates(){
+        return $this->belongsToMany(Plate::class, 'plate_menu');
+    }
 }

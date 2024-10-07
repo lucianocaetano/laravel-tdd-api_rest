@@ -25,7 +25,10 @@ class StoreMenuRequest extends FormRequest
             "name" => "required|string|max:255",
             "description" => "required|string|max:1000",
             "restaurant_id" => "required|exists:restaurants,id",
-            "slug" => "required|string"
+            "slug" => "required|string",
+
+            'plate_ids' => ['required', 'array'],
+            'plate_ids.*' => ['integer', 'exists:plates,id'],
         ];
     }
 

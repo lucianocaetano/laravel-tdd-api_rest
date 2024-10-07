@@ -13,12 +13,16 @@ class Plate extends Model
         'restaurant_id', 'name', 'description', 'price', 'image', "slug"
     ];
 
+    function getRouteKeyName()
+    {
+        return "slug";
+    }
+
     function restaurant(){
         return $this->belongsTo(Restaurant::class);
     }
 
-    function getRouteKeyName()
-    {
-        return "slug";
+    function menus(){
+        return $this->belongsToMany(Menu::class, 'plate_menu');
     }
 }

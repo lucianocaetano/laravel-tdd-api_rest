@@ -17,7 +17,7 @@ class PlateSeeder extends Seeder
         $restaurants = Restaurant::all();
 
         foreach($restaurants as $restaurant){
-            Plate::factory(30)->create([
+            Plate::factory(10)->create([
                 "restaurant_id" => $restaurant->id
             ]);
         }

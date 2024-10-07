@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Base64Helper;
+use App\Helpers\PlateHelper;
 use App\Http\Requests\StorePlateRequest;
 use App\Http\Requests\UpdatePlateRequest;
 use App\Http\Resources\PlateCollection;
@@ -12,6 +14,10 @@ use Illuminate\Support\Facades\Gate;
 
 class PlateController extends Controller
 {
+    public function __construct(public PlateHelper $helper)
+    {
+
+    }
     /**
      * Display a listing of the resource.
      */
@@ -29,6 +35,8 @@ class PlateController extends Controller
     {
         $data = $request->validated();
         $plates = $restaurant->plates()->create($data);
+
+        $data['image'] = $this->helper->uploadImage($request->get('image'), $restaurant->id);
 
         return jsonResponse(message: "OK", data:  PlateResource::make($plates));
     }
@@ -58,6 +66,10 @@ class PlateController extends Controller
         Gate::authorize("update", $plate);
 
         $data = $request->validated();
+
+        if($request->get('image')){
+            $data['image'] = $this->helper->uploadImage($request->get('image'), $restaurant->id);
+        }
 
         $plate->update($data);
 

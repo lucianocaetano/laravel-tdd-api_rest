@@ -4,6 +4,7 @@ namespace Tests\Feature\Menu;
 
 use App\Models\Restaurant;
 use App\Models\User;
+use Database\Seeders\PlateSeeder;
 use Database\Seeders\RestaurantSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -20,7 +21,7 @@ class CreateMenuTest extends TestCase
     {
         parent::setUp();
 
-        $this->seed([RestaurantSeeder::class]);
+        $this->seed([RestaurantSeeder::class, PlateSeeder::class]);
     }
 
     protected $baseAPI = "/api/v1";
@@ -33,7 +34,8 @@ class CreateMenuTest extends TestCase
         $data = [
             "name" => "Hola mundo",
             "description" =>"Sit voluptatum explicabo quaerat minima hic. Harum officiis illum fuga accusantium neque minima, obcaecati, voluptatum Repudiandae iste quisquam vel laborum pariatur. Officiis voluptas saepe ipsum asperiores nobis. Nulla consectetur fugit.",
-            "restaurant_id" => $restaurant->id
+            "restaurant_id" => $restaurant->id,
+            "plate_ids" => []
         ];
 
         $response = $this->apiAs($user, "post", $this->baseAPI. "/" . $restaurant->slug .'/menu', $data);

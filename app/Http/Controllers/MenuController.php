@@ -7,7 +7,6 @@ use App\Http\Requests\UpdateMenuRequest;
 use App\Http\Resources\MenuResource;
 use App\Models\Menu;
 use App\Models\Restaurant;
-use Illuminate\Http\Request;
 
 class MenuController extends Controller
 {
@@ -17,9 +16,11 @@ class MenuController extends Controller
      */
     public function store(Restaurant $restaurant, StoreMenuRequest $request)
     {
-        $data = $request->validated();
+        $request->validate();
 
-        $menu = $restaurant->menu()->create($data);
+        $menu = $restaurant->menu()->create($request->only("name", "description", "slug", "restaurant_id"));
+
+        $menu->plates()->sync($request->get("plate_ids"));
 
         return jsonResponse(data: [
             "menu" => MenuResource::make($menu)
