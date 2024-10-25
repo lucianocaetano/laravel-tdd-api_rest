@@ -2,6 +2,9 @@
 
 namespace Tests\Feature\Menu;
 
+use App\Http\Resources\PlateResource;
+use App\Models\Menu;
+use App\Models\Plate;
 use App\Models\Restaurant;
 use App\Models\User;
 use Database\Seeders\PlateSeeder;
@@ -30,12 +33,13 @@ class CreateMenuTest extends TestCase
     {
         $restaurant = Restaurant::first();
         $user = User::first();
+        $plate = $restaurant->plates()->first();
 
         $data = [
             "name" => "Hola mundo",
             "description" =>"Sit voluptatum explicabo quaerat minima hic. Harum officiis illum fuga accusantium neque minima, obcaecati, voluptatum Repudiandae iste quisquam vel laborum pariatur. Officiis voluptas saepe ipsum asperiores nobis. Nulla consectetur fugit.",
             "restaurant_id" => $restaurant->id,
-            "plate_ids" => []
+            "plate_ids" => [$plate->id],
         ];
 
         $response = $this->apiAs($user, "post", $this->baseAPI. "/" . $restaurant->slug .'/menu', $data);
@@ -49,6 +53,7 @@ class CreateMenuTest extends TestCase
                     "name" => $data["name"],
                     "description" => $data["description"],
                     "restaurant" => $restaurant->name,
+                    "plates" => [PlateResource::make($plate)->resolve()],
                 ]
             ]
         ]);

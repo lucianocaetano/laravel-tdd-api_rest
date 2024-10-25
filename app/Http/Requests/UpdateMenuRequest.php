@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\MenuPlateRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateMenuRequest extends FormRequest
@@ -11,7 +12,7 @@ class UpdateMenuRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +23,12 @@ class UpdateMenuRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            "name" => "string|max:255",
+            "description" => "string|max:1000",
+            "restaurant_id" => "exists:restaurants,id",
+            "slug" => "string",
+            'plate_ids' => 'nullable|array',
+            'plate_ids.*' => ['integer', 'exists:plates,id', new MenuPlateRule($this->restaurant_id)],
         ];
     }
 }

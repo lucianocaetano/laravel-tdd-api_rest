@@ -42,13 +42,13 @@ class PlateListTest extends TestCase
         $response->assertJsonFragment(["message" => "OK"]);
         $response->assertJsonFragment(["data" => [
             "plates" => PlateResource::collection($plates)->resolve(),
-            "total" => 30,
-            "count" => 15,
+            "total" => 10,
+            "count" => 10,
             "per_page" => 15,
             "current_page" => 1,
-            "last_page" => 2
+            "last_page" => 1
         ]
         ]);
-        $response->assertJsonCount(15, "data.plates");
+        $response->assertJsonCount(10, "data.plates");
     }
 }

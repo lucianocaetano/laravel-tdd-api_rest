@@ -6,7 +6,6 @@ use App\Http\Controllers\PlateController;
 use App\Http\Controllers\RestaurantController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
-use Symfony\Component\HttpFoundation\Request;
 
 Route::middleware(["guest"])->prefix("/auth")->group(function () {
     Route::post("/login", [AuthController::class, "index"])->name("login");

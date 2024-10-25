@@ -17,7 +17,8 @@ class MenuResource extends JsonResource
         return [
             "name" => $this->name,
             "description" => $this->description,
-            "restaurant" => $this->restaurant->name
+            "restaurant" => $this->restaurant->name,
+            "plates" => PlateResource::collection($this->plates),
         ];
     }
 }

@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateMenuRequest;
 use App\Http\Resources\MenuResource;
 use App\Models\Menu;
 use App\Models\Restaurant;
+use Illuminate\Support\Facades\Gate;
 
 class MenuController extends Controller
 {
@@ -16,7 +17,9 @@ class MenuController extends Controller
      */
     public function store(Restaurant $restaurant, StoreMenuRequest $request)
     {
-        $request->validate();
+        Gate::authorize("view", $restaurant);
+
+        $request->validated();
 
         $menu = $restaurant->menu()->create($request->only("name", "description", "slug", "restaurant_id"));
 
@@ -30,8 +33,12 @@ class MenuController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Menu $menu)
+    public function show(Restaurant $restaurant, string $menu)
     {
+        Gate::authorize("view", $restaurant);
+
+        $menu = Menu::where('slug', $menu)->where('restaurant_id', $restaurant->id)->firstOrFail();
+
         return jsonResponse(data: [
             "menu" => MenuResource::make($menu)
         ], message: "OK");
@@ -40,9 +47,23 @@ class MenuController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateMenuRequest $request, string $id)
+    public function update(UpdateMenuRequest $request, Restaurant $restaurant, Menu $menu)
     {
-        //
+        Menu::where('slug', $menu->slug)->where('restaurant_id', $restaurant->id)->firstOrFail();
+
+        Gate::authorize("view", $restaurant);
+
+        $request->validated();
+
+        $menu->update($request->except("plate_ids"));
+
+        if($request->get("plate_ids")){
+            $menu->plates()->sync($request->get("plate_ids"));
+        }
+
+        return jsonResponse(data: [
+            "menu" => MenuResource::make($menu)
+        ], message: "OK");
     }
 
     /**
