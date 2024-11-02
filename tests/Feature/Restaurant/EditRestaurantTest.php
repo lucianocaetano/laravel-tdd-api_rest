@@ -32,7 +32,8 @@ class EditRestaurantTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertJsonFragment(["message" => "OK"]);
-        $response->assertJsonStructure(["message", "errors", "data" => ["restaurant" => ["id", "name", "description", "slug", "user_id"]]]);
+        $response->assertJsonFragment(["errors" => null]);
+        $response->assertJsonStructure(["message", "errors", "data" => ["restaurant" => ["name", "description", "slug", "user_id"]]]);
     }
 
     public function test_edit_not_my_restaurant(): void

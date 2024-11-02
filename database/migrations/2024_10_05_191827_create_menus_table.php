@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string("slug")->unique();
             $table->string('description');
 
-            $table->unsignedBigInteger('restaurant_id')->unique();
+            $table->unsignedBigInteger('restaurant_id');
             $table->foreign('restaurant_id')->references('id')->on('restaurants')->onDelete('cascade');
 
             $table->timestamps();

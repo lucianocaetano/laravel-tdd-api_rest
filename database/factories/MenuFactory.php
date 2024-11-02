@@ -20,8 +20,8 @@ class MenuFactory extends Factory
 
         return [
             "name" => $name,
-            "slug" => str($name)->slug()->value(),
-            "description" => $this->faker->paragraph(),
+            "slug" => str($name. " " . uniqid())->slug()->value(),
+            "description" =>  substr($this->faker->paragraph(), 0, 255),
         ];
     }
 }

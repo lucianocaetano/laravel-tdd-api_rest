@@ -13,7 +13,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
-class ShowMenuTest extends TestCase
+class DeleteMenuTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -21,8 +21,8 @@ class ShowMenuTest extends TestCase
         parent::setUp();
 
         $this->seed([
-            RestaurantSeeder::class,
             UserSeeder::class,
+            RestaurantSeeder::class,
             PlateSeeder::class,
             MenuSeeder::class,
         ]);
@@ -30,27 +30,19 @@ class ShowMenuTest extends TestCase
 
     protected $baseAPI = "api/v1";
 
-    public function test_show_menu(): void
+    public function test_delete_menu(): void
     {
         $restaurant = Restaurant::first();
         $user = $restaurant->user;
         $menu = $restaurant->menus->first();
 
-        $response = $this->apiAs($user, "get", $this->baseAPI . "/" . $restaurant->slug . "/menu/" . $menu->slug);
+        $response = $this->apiAs($user, "delete", $this->baseAPI . "/" . $restaurant->slug . "/menu/" . $menu->slug);
 
         $response->assertStatus(200);
 
         $response->assertJsonFragment(["errors" => null]);
         $response->assertJsonFragment(["message" => "OK"]);
-        $response->assertJsonStructure(["data" => [
-            "menu" => [
-                "name",
-                "slug",
-                "description",
-                "restaurant",
-                "plates",
-            ]
-        ]]);
+
     }
 
     public function test_menu_not_found_in_this_restaurant(): void
@@ -59,7 +51,7 @@ class ShowMenuTest extends TestCase
         $user = $restaurant->user;
         $menu = Menu::where("restaurant_id", "!=", $restaurant->id)->first();
 
-        $response = $this->apiAs($user, "get", $this->baseAPI . "/" . $restaurant->slug . "/menu/" . $menu->slug);
+        $response = $this->apiAs($user, "delete", $this->baseAPI . "/" . $restaurant->slug . "/menu/" . $menu->slug);
 
         $response->assertStatus(404);
     }
@@ -70,8 +62,7 @@ class ShowMenuTest extends TestCase
         $user = User::where("name", "=", "mauro")->first();
         $menu = $restaurant->menus->first();
 
-        $response = $this->apiAs($user, "get", $this->baseAPI . "/" . $restaurant->slug . "/menu/" . $menu->slug);
+        $response = $this->apiAs($user, "delete", $this->baseAPI . "/" . $restaurant->slug . "/menu/" . $menu->slug);
 
         $response->assertStatus(403);
-    }
-}
+    }}

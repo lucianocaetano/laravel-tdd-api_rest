@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreMenuRequest;
 use App\Http\Requests\UpdateMenuRequest;
+use App\Http\Resources\MenuCollection;
 use App\Http\Resources\MenuResource;
 use App\Models\Menu;
 use App\Models\Restaurant;
@@ -11,6 +12,15 @@ use Illuminate\Support\Facades\Gate;
 
 class MenuController extends Controller
 {
+
+    public function index(Restaurant $restaurant){
+
+        Gate::authorize("view", $restaurant);
+
+        $menu = $restaurant->menus()->paginate();
+
+        return jsonResponse(data:  new MenuCollection($menu), message: "OK", status: 200);
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -21,7 +31,7 @@ class MenuController extends Controller
 
         $request->validated();
 
-        $menu = $restaurant->menu()->create($request->only("name", "description", "slug", "restaurant_id"));
+        $menu = $restaurant->menus()->create($request->only("name", "description", "slug", "restaurant_id"));
 
         $menu->plates()->sync($request->get("plate_ids"));
 
@@ -30,9 +40,6 @@ class MenuController extends Controller
         ], message: "OK", status: 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Restaurant $restaurant, string $menu)
     {
         Gate::authorize("view", $restaurant);
@@ -69,8 +76,15 @@ class MenuController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Restaurant $restaurant, Menu $menu)
     {
-        //
+        Menu::where('slug', $menu->slug)->where('restaurant_id', $restaurant->id)->firstOrFail();
+
+        Gate::authorize("delete", $restaurant);
+
+        $menu->delete();
+
+        return jsonResponse(message: "OK");
+
     }
 }

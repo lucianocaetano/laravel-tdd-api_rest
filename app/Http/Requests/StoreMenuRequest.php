@@ -24,9 +24,9 @@ class StoreMenuRequest extends FormRequest
     {
         return [
             "name" => "required|string|max:255",
-            "description" => "required|string|max:1000",
-            "restaurant_id" => "required|exists:restaurants,id",
             "slug" => "required|string",
+            "description" => "required|string|max:1500",
+            "restaurant_id" => "required|exists:restaurants,id",
             'plate_ids' => 'nullable|array',
             'plate_ids.*' => ['integer', 'exists:plates,id', new MenuPlateRule($this->restaurant_id)],
         ];

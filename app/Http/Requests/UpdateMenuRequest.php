@@ -31,4 +31,12 @@ class UpdateMenuRequest extends FormRequest
             'plate_ids.*' => ['integer', 'exists:plates,id', new MenuPlateRule($this->restaurant_id)],
         ];
     }
+
+    public function prepareForValidation() {
+        if($this->name){
+            $this->merge([
+             "slug" => str($this->name . uniqid())->slug()->value()
+            ]);
+        }
+    }
 }

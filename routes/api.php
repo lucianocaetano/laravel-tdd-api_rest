@@ -25,7 +25,7 @@ Route::middleware(["auth"])->group(function () {
     // api restaurant
     Route::apiResource("/restaurant", RestaurantController::class);
     Route::apiResource("/{restaurant:slug}/plate", PlateController::class);
-    Route::apiResource("/{restaurant:slug}/menu", MenuController::class)->except(["index"]);
+    Route::apiResource("/{restaurant:slug}/menu", MenuController::class);
 });
 
 

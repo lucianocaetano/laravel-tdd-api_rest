@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::create('plates', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(\App\Models\Restaurant::class)->constrained();
             $table->string('name');
             $table->string('slug');
             $table->decimal('price', 10, 2);
             $table->text('description');
             $table->string('image')->nullable();
+            $table->foreignIdFor(\App\Models\Restaurant::class)->constrained();
             $table->timestamps();
         });
     }

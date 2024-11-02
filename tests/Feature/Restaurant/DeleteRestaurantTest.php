@@ -35,6 +35,7 @@ class DeleteRestaurantTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertJsonFragment(["message" => "OK"]);
+        $response->assertJsonFragment(["errors" => null]);
         $response->assertJsonStructure(["message", "errors", "data"]);
         $this->assertDatabaseCount("restaurants", 0);
     }

@@ -17,7 +17,8 @@ class EditMenuTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function setUp (): void {
+    public function setUp(): void
+    {
         parent::setUp();
 
         $this->seed([
@@ -34,26 +35,26 @@ class EditMenuTest extends TestCase
     {
         $restaurant = Restaurant::first();
         $user = $restaurant->user;
-        $menu = $restaurant->menu;
+        $menu = $restaurant->menus->first();
 
         $data = [
-           "name" => "Menu name"
+            "name" => "Menu name"
         ];
 
         $response = $this->apiAs($user, "patch", $this->baseAPI . "/" . $restaurant->slug . "/menu/" . $menu->slug, $data);
 
         $response->assertStatus(200);
 
+        $response->assertJsonStructure([
+            "message", "errors", "data" => [
+                "menu" => ["name", "description", "slug", "restaurant", "plates"]
+            ]
+        ]);
+
         $response->assertJsonFragment(["errors" => null]);
         $response->assertJsonFragment(["message" => "OK"]);
-        $response->assertJsonFragment(["data" => [
-            "menu" => [
-                "name" => "Menu name",
-                "description" => $menu->description,
-                "restaurant" => $menu->restaurant->name,
-                "plates" => $menu->plates->toArray()
-            ]
-        ]]);
+
+        $response->assertJsonPath("data.menu.name", "Menu name");
     }
 
     public function test_menu_not_found_in_this_restaurant(): void
@@ -67,6 +68,14 @@ class EditMenuTest extends TestCase
         $response->assertStatus(404);
     }
 
+    public function test_you_are_not_the_owner_of_this_restaurant(): void
+    {
+        $restaurant = Restaurant::first();
+        $user = User::where("name", "=", "mauro")->first();
+        $menu = $restaurant->menus->first();
 
+        $response = $this->apiAs($user, "patch", $this->baseAPI . "/" . $restaurant->slug . "/menu/" . $menu->slug);
 
+        $response->assertStatus(403);
+    }
 }

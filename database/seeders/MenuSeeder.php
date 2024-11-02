@@ -16,9 +16,11 @@ class MenuSeeder extends Seeder
         $restaurants = Restaurant::all();
 
         foreach ($restaurants as $restaurant) {
-            Menu::factory([
-                "restaurant_id" => $restaurant->id,
-            ])->create();
+            Menu::factory(15)->create(
+                [
+                    "restaurant_id" => $restaurant->id,
+                ]
+            );
         }
     }
 }

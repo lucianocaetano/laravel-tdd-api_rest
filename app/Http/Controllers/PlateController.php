@@ -67,7 +67,7 @@ class PlateController extends Controller
 
         $plate->update($data);
 
-        return jsonResponse(message: "OK", data:  [ "restaurant" => PlateResource::make($plate) ]);
+        return jsonResponse(message: "OK", data:  [ "plate" => PlateResource::make($plate) ]);
     }
 
     /**
