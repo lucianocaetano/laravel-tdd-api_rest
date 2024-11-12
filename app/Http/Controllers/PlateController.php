@@ -17,6 +17,7 @@ class PlateController extends Controller
      */
     public function index(Restaurant $restaurant)
     {
+        Gate::authorize("view", $restaurant);
         $plates = $restaurant->plates()->paginate();
 
         return jsonResponse(message: "OK", data:  new PlateCollection($plates));
@@ -27,7 +28,9 @@ class PlateController extends Controller
      */
     public function store(Restaurant $restaurant, StorePlateRequest $request)
     {
+        Gate::authorize("view", $restaurant);
         $data = $request->validated();
+
         $plates = $restaurant->plates()->create($data);
 
         //$data['image'] = $this->helper->uploadImage($request->get('image'), $restaurant->id);
@@ -38,10 +41,9 @@ class PlateController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Restaurant $restaurant, string $plate_slug)
+    public function show(Restaurant $restaurant, Plate $plate)
     {
-        $plate = Plate::where('slug', $plate_slug)->where('restaurant_id', $restaurant->id)->firstOrFail();
-
+        Gate::authorize("view", $restaurant);
         Gate::authorize("view", $plate);
 
         return jsonResponse(message: "OK", data: [
@@ -53,16 +55,15 @@ class PlateController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Restaurant $restaurant, string $plate_slug, UpdatePlateRequest $request)
+    public function update(Restaurant $restaurant, Plate $plate, UpdatePlateRequest $request)
     {
-        $plate = Plate::where('slug', $plate_slug)->where('restaurant_id', $restaurant->id)->firstOrFail();
-
+        Gate::authorize("view", $restaurant);
         Gate::authorize("update", $plate);
 
         $data = $request->validated();
 
         if($request->get('image')){
-            $data['image'] = $this->helper->uploadImage($request->get('image'), $restaurant->id);
+            //$data['image'] = $this->helper->uploadImage($request->get('image'), $restaurant->id);
         }
 
         $plate->update($data);
@@ -73,10 +74,9 @@ class PlateController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Restaurant $restaurant, string $plate_slug)
+    public function destroy(Restaurant $restaurant, Plate $plate)
     {
-        $plate = Plate::where('slug', $plate_slug)->where('restaurant_id', $restaurant->id)->firstOrFail();
-
+        Gate::authorize("view", $restaurant);
         Gate::authorize("delete", $plate);
 
         $plate->delete();

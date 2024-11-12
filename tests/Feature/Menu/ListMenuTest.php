@@ -3,6 +3,7 @@
 namespace Tests\Feature\Menu;
 
 use App\Http\Resources\MenuResource;
+use App\Models\Menu;
 use App\Models\Restaurant;
 use App\Models\User;
 use Database\Seeders\MenuSeeder;
@@ -134,4 +135,5 @@ class ListMenuTest extends TestCase
 
         $response->assertStatus(403);
     }
+
 }

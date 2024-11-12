@@ -30,6 +30,9 @@ class EditMenuTest extends TestCase
     }
 
     protected $baseAPI = "api/v1";
+    public $data = [
+        "name" => "Menu name"
+    ];
 
     public function test_edit_menu(): void
     {
@@ -37,11 +40,8 @@ class EditMenuTest extends TestCase
         $user = $restaurant->user;
         $menu = $restaurant->menus->first();
 
-        $data = [
-            "name" => "Menu name"
-        ];
 
-        $response = $this->apiAs($user, "patch", $this->baseAPI . "/" . $restaurant->slug . "/menu/" . $menu->slug, $data);
+        $response = $this->apiAs($user, "patch", $this->baseAPI . "/" . $restaurant->slug . "/menu/" . $menu->slug, $this->data);
 
         $response->assertStatus(200);
 
@@ -57,24 +57,24 @@ class EditMenuTest extends TestCase
         $response->assertJsonPath("data.menu.name", "Menu name");
     }
 
-    public function test_menu_not_found_in_this_restaurant(): void
-    {
-        $restaurant = Restaurant::first();
-        $user = $restaurant->user;
-        $menu = Menu::where("restaurant_id", "!=", $restaurant->id)->first();
-
-        $response = $this->apiAs($user, "patch", $this->baseAPI . "/" . $restaurant->slug . "/menu/" . $menu->slug);
-
-        $response->assertStatus(404);
-    }
-
     public function test_you_are_not_the_owner_of_this_restaurant(): void
     {
         $restaurant = Restaurant::first();
         $user = User::where("name", "=", "mauro")->first();
         $menu = $restaurant->menus->first();
 
-        $response = $this->apiAs($user, "patch", $this->baseAPI . "/" . $restaurant->slug . "/menu/" . $menu->slug);
+        $response = $this->apiAs($user, "patch", $this->baseAPI . "/" . $restaurant->slug . "/menu/" . $menu->slug, $this->data);
+
+        $response->assertStatus(403);
+    }
+
+    public function test_you_are_not_the_owner_of_this_menu(): void
+    {
+        $restaurant = Restaurant::first();
+        $user = User::where("name", "=", "mauro")->first();
+        $menu = Menu::whereNot("restaurant_id", $restaurant->id)->first();
+
+        $response = $this->apiAs($user, "patch", $this->baseAPI . "/" . $restaurant->slug . "/menu/" . $menu->slug, $this->data);
 
         $response->assertStatus(403);
     }

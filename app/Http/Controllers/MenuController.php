@@ -40,11 +40,10 @@ class MenuController extends Controller
         ], message: "OK", status: 201);
     }
 
-    public function show(Restaurant $restaurant, string $menu)
+    public function show(Restaurant $restaurant, Menu $menu)
     {
         Gate::authorize("view", $restaurant);
-
-        $menu = Menu::where('slug', $menu)->where('restaurant_id', $restaurant->id)->firstOrFail();
+        Gate::authorize("view", $menu);
 
         return jsonResponse(data: [
             "menu" => MenuResource::make($menu)
@@ -56,9 +55,8 @@ class MenuController extends Controller
      */
     public function update(UpdateMenuRequest $request, Restaurant $restaurant, Menu $menu)
     {
-        Menu::where('slug', $menu->slug)->where('restaurant_id', $restaurant->id)->firstOrFail();
-
         Gate::authorize("view", $restaurant);
+        Gate::authorize("update", $menu);
 
         $request->validated();
 
@@ -78,9 +76,8 @@ class MenuController extends Controller
      */
     public function destroy(Restaurant $restaurant, Menu $menu)
     {
-        Menu::where('slug', $menu->slug)->where('restaurant_id', $restaurant->id)->firstOrFail();
-
-        Gate::authorize("delete", $restaurant);
+        Gate::authorize("view", $restaurant);
+        Gate::authorize("delete", $menu);
 
         $menu->delete();
 

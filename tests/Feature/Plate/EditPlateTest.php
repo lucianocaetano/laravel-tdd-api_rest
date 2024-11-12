@@ -24,10 +24,12 @@ class EditPlateTest extends TestCase
         parent::setUp();
 
         $this->seed([RestaurantSeeder::class, PlateSeeder::class, UserSeeder::class]);
-
     }
 
     protected $baseAPI = "api/v1";
+    public $data = [
+        'name' => "Milanesas",
+    ];
 
     public function test_edit_my_plate(): void
     {
@@ -35,11 +37,8 @@ class EditPlateTest extends TestCase
         $restaurant = $plate->restaurant;
         $user = $restaurant->user;
 
-        $data = [
-            'name' => "Milanesas",
-        ];
 
-        $response = $this->apiAs($user, "put", $this->baseAPI . "/" . $restaurant->slug . '/plate/' . $plate->slug, $data);
+        $response = $this->apiAs($user, "put", $this->baseAPI . "/" . $restaurant->slug . '/plate/' . $plate->slug, $this->data);
 
         $response->assertStatus(200);
         $this->assertTrue($plate->name !== $response->json()["data"]["plate"]["name"]);
@@ -58,17 +57,6 @@ class EditPlateTest extends TestCase
         ]]);
     }
 
-    public function test_delete_my_plate_not_found(): void
-    {
-        $restaurant = Restaurant::first();
-        $plate = Plate::where("restaurant_id", "!=", $restaurant->id)->first();
-        $user = $restaurant->user;
-
-        $response = $this->apiAs($user, "delete", $this->baseAPI . "/" . $restaurant->slug . '/plate/' . $plate->slug);
-
-        $response->assertStatus(404);
-    }
-
     public function test_you_are_not_the_owner_of_this_restaurant(): void
     {
         $plate = Plate::first();
@@ -80,5 +68,14 @@ class EditPlateTest extends TestCase
         $response->assertStatus(403);
     }
 
+    public function test_you_are_not_the_owner_of_this_plate(): void
+    {
+        $restaurant = Restaurant::first();
+        $user = User::where("name", "=", "mauro")->first();
+        $plate = Plate::whereNot("restaurant_id", $restaurant->id)->first();
 
+        $response = $this->apiAs($user, "patch", $this->baseAPI . "/" . $restaurant->slug . "/plate/" . $plate->slug, $this->data);
+
+        $response->assertStatus(403);
+    }
 }

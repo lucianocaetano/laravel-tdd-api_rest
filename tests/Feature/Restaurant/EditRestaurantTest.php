@@ -45,6 +45,4 @@ class EditRestaurantTest extends TestCase
 
         $response->assertStatus(403);
     }
-
-
 }
