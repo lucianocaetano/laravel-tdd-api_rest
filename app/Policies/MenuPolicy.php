@@ -21,7 +21,7 @@ class MenuPolicy
      */
     public function view(User $user, Menu $menu): bool
     {
-        return $user->restaurants()->where("id", $menu->restaurant_id)->exists();
+        return $user->id === $menu->restaurant->user_id;
     }
 
     /**
@@ -45,7 +45,7 @@ class MenuPolicy
      */
     public function delete(User $user, Menu $menu): bool
     {
-        return $user->restaurants()->where("id", $menu->restaurant_id)->exists();
+        return $user->id === $menu->restaurant->user_id;
     }
 
     /**

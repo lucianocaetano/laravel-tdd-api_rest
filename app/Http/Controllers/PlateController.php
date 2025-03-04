@@ -18,7 +18,8 @@ class PlateController extends Controller
     public function index(Restaurant $restaurant)
     {
         Gate::authorize("view", $restaurant);
-        $plates = $restaurant->plates()->paginate();
+
+        $plates = $restaurant->plates()->orderBy('created_at', 'asc')->paginate();
 
         return jsonResponse(message: "OK", data:  new PlateCollection($plates));
     }
@@ -35,7 +36,9 @@ class PlateController extends Controller
 
         //$data['image'] = $this->helper->uploadImage($request->get('image'), $restaurant->id);
 
-        return jsonResponse(message: "OK", data:  PlateResource::make($plates));
+        return jsonResponse(message: "OK", data:  [
+            'plate' => PlateResource::make($plates)
+        ]);
     }
 
     /**

@@ -22,12 +22,10 @@ class UpdatePlateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['sometimes', "string", "max:50"],
-            'description' => ['sometimes', "string", "max:50"],
-            'image' => ['sometimes', "image", "mimes:jpeg,png,jpg,gif,svg", "max:50"],
-            'price' => ['sometimes', "numeric"],
+            'name' => ["string", "max:50"],
+            'description' => ["string", "max:50"],
+            'image' => ["image", "mimes:jpeg,png,jpg,gif,svg", "max:50"],
+            'price' => ["numeric"],
         ];
     }
-
-
 }

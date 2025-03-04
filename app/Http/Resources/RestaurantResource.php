@@ -18,7 +18,14 @@ class RestaurantResource extends JsonResource
             'name' => $this->name,
             'description' => $this->description,
             'slug' => $this->slug,
-            'user_id' => $this->user_id,
+            'user' => $this->user->name,
+            'links' => [
+                'self' => route('restaurant.show', ['restaurant' => $this->slug]),
+                'index' => route('restaurant.index'),
+                'store' => route('restaurant.store'),
+                'update' => route('restaurant.update', ['restaurant' => $this->slug]),
+                'delete' => route('restaurant.destroy', ['restaurant' => $this->slug]),
+            ]
         ];
     }
 }

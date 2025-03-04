@@ -17,7 +17,13 @@ class RestaurantController extends Controller
      */
     public function index()
     {
-        $restaurants = Auth::user()->restaurants()->paginate();
+        $restaurants = Auth::user()
+            ->restaurants()
+            ->filter()
+            ->sort()
+            ->search(field: 'description')
+            ->paginate();
+
 
         return jsonResponse(data: new RestaurantCollection($restaurants), message: "OK");
     }
@@ -34,7 +40,6 @@ class RestaurantController extends Controller
         return jsonResponse(data: [
             "restaurant" => RestaurantResource::make($restaurant)
         ], message: "OK", status: 201);
-
     }
 
     /**

@@ -17,7 +17,8 @@ class ShowMenuTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function setUp (): void {
+    public function setUp(): void
+    {
         parent::setUp();
 
         $this->seed([
@@ -40,17 +41,28 @@ class ShowMenuTest extends TestCase
 
         $response->assertStatus(200);
 
-        $response->assertJsonFragment(["errors" => null]);
-        $response->assertJsonFragment(["message" => "OK"]);
         $response->assertJsonStructure(["data" => [
             "menu" => [
                 "name",
                 "slug",
                 "description",
                 "restaurant",
-                "plates",
+                'links' => [
+                    'self',
+                    'index',
+                    'store',
+                    'update',
+                    'delete',
+                ],
             ]
         ]]);
+        $response->assertJsonFragment(["errors" => null]);
+        $response->assertJsonFragment(["message" => "OK"]);
+        $response->assertJsonPath('data.menu.links.self', route('menu.show', ['restaurant' => $restaurant->slug, 'menu' => $menu->id]));
+        $response->assertJsonPath('data.menu.links.index', route('menu.index', ['restaurant' => $restaurant->slug]));
+        $response->assertJsonPath('data.menu.links.store', route('menu.store', ['restaurant' => $restaurant->slug]));
+        $response->assertJsonPath('data.menu.links.update', route('menu.update', ['restaurant' => $restaurant->slug, 'menu' => $menu->id]));
+        $response->assertJsonPath('data.menu.links.delete', route('menu.destroy', ['restaurant' => $restaurant->slug, 'menu' => $menu->id]));
     }
 
     public function test_you_are_not_the_owner_of_this_restaurant(): void

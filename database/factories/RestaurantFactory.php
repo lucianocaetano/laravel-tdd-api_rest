@@ -25,7 +25,7 @@ class RestaurantFactory extends Factory
         return [
             'name' => $name,
             'description' => $this->faker->text(200),
-            'slug' => Str::slug($name . ' ' . uniqid()),
+            'slug' => Str::slug($name),
             'user_id' =>  User::factory()
         ];
     }

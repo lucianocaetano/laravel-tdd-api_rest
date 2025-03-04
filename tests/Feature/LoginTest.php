@@ -2,11 +2,9 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
 use Database\Seeders\UserSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Mockery\Undefined;
 use Tests\TestCase;
 
 class LoginTest extends TestCase
@@ -37,9 +35,8 @@ class LoginTest extends TestCase
 
         $response = $this->postJson($this->baseAPI.'login/', $credentials);
 
-        $response->assertStatus(401);
-        $response->assertJson(["errors" => ["incorrect credentials"]]);
-
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors(['email']);
     }
 
     public function test_email_must_be_required(): void

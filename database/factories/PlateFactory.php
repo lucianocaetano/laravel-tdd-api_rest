@@ -23,7 +23,7 @@ class PlateFactory extends Factory
             'price' => fake()->numberBetween(100, 1000),
             'name' => $name,
             'description' => fake()->text,
-            'slug' => Str::slug($name . ' ' . uniqid()),
+            'slug' => Str::slug($name),
         ];
     }
 }

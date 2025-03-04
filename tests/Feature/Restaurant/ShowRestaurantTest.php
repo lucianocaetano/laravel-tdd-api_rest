@@ -51,11 +51,10 @@ class ShowRestaurantTest extends TestCase
     public function test_show_a_not_my_restaurant(): void
     {
         $user = User::where(["name" => "mauro"])->first();
-        $restaurant = Restaurant::first();
+        $restaurant = Restaurant::where('user_id', '!=', $user->id)->first();
 
         $response = $this->apiAs($user, "get", $this->baseAPI . '/restaurant/' . $restaurant->slug);
 
         $response->assertStatus(403);
     }
-
 }

@@ -35,7 +35,7 @@ class StoreMenuRequest extends FormRequest
     protected function prepareForValidation(): void
     {
         $this->merge([
-            'slug' => str($this->get("name").' '.uniqid())->slug()->value(),
+            'slug' => str($this->get("name"))->slug()->value(),
         ]);
     }
 }

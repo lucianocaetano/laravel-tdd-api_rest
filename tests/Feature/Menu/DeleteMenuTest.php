@@ -48,7 +48,7 @@ class DeleteMenuTest extends TestCase
     public function test_you_are_not_the_owner_of_this_restaurant(): void
     {
         $restaurant = Restaurant::first();
-        $user = User::where("name", "=", "mauro")->first();
+        $user = User::where("name", "!=", "mauro")->first();
         $menu = $restaurant->menus->first();
 
         $response = $this->apiAs($user, "delete", $this->baseAPI . "/" . $restaurant->slug . "/menu/" . $menu->slug);
@@ -58,9 +58,9 @@ class DeleteMenuTest extends TestCase
 
     public function test_you_are_not_the_owner_of_this_menu(): void
     {
-        $restaurant = Restaurant::first();
-        $user = User::where("name", "=", "mauro")->first();
-        $menu = Menu::whereNot("restaurant_id", $restaurant->id)->first();
+        $menu = Menu::first();
+        $restaurant = Restaurant::whereNot("user_id", $menu->restaurant->user_id)->first();
+        $user = $restaurant->user;
 
         $response = $this->apiAs($user, "delete", $this->baseAPI . "/" . $restaurant->slug . "/menu/" . $menu->slug);
 

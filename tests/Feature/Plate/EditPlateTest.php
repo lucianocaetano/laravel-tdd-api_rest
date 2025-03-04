@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Plate;
 
+use App\Http\Resources\PlateResource;
 use App\Models\Plate;
 use App\Models\Restaurant;
 use App\Models\User;
@@ -37,25 +38,40 @@ class EditPlateTest extends TestCase
         $restaurant = $plate->restaurant;
         $user = $restaurant->user;
 
-
         $response = $this->apiAs($user, "put", $this->baseAPI . "/" . $restaurant->slug . '/plate/' . $plate->slug, $this->data);
 
         $response->assertStatus(200);
-        $this->assertTrue($plate->name !== $response->json()["data"]["plate"]["name"]);
-        $response->assertJsonStructure(["message", "errors", "data"]);
         $response->assertJsonFragment(["errors" => null]);
         $response->assertJsonFragment(["message" => "OK"]);
-        $response->assertJsonFragment(["data" => [
-            "plate" => [
-                "description" => $plate->description,
-                "id" => $plate->id,
-                "image" => null,
-                "name" => "Milanesas",
-                "price" => $plate->price,
-                "restaurant_id" => $plate->restaurant_id
+
+        $response->assertJsonStructure([
+            'data' => [
+                "plate" => [
+                    "id",
+                    'name',
+                    'description',
+                    'price',
+                    'image',
+                    'restaurant',
+                    'links' => [
+                        'self',
+                        'index',
+                        'store',
+                        'update',
+                        'delete',
+                    ],
+                ],
             ]
-        ]]);
-    }
+        ]);
+
+        $response->assertJsonPath('data.plate.name', $this->data['name']);
+        
+        $response->assertJsonPath('data.plate.links.self', route('plate.show', ['restaurant' => $restaurant->slug, 'plate' => $plate->id]));
+        $response->assertJsonPath('data.plate.links.self', route('plate.show', ['restaurant' => $restaurant->slug, 'plate' => $plate->id]));
+        $response->assertJsonPath('data.plate.links.index', route('plate.index', ['restaurant' => $restaurant->slug]));
+        $response->assertJsonPath('data.plate.links.store', route('plate.store', ['restaurant' => $restaurant->slug]));
+        $response->assertJsonPath('data.plate.links.update', route('plate.update', ['restaurant' => $restaurant->slug, 'plate' => $plate->id]));
+        $response->assertJsonPath('data.plate.links.delete', route('plate.destroy', ['restaurant' => $restaurant->slug, 'plate' => $plate->id]));    }
 
     public function test_you_are_not_the_owner_of_this_restaurant(): void
     {

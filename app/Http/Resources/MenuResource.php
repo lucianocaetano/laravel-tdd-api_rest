@@ -19,7 +19,13 @@ class MenuResource extends JsonResource
             "slug" => $this->slug,
             "description" => $this->description,
             "restaurant" => $this->restaurant->name,
-            "plates" => PlateResource::collection($this->plates),
+            'links' => [
+                'self' => route('menu.show', ['restaurant' => $this->restaurant->slug, 'menu' => $this->id]),
+                'index' => route('menu.index', ['restaurant' => $this->restaurant->slug]),
+                'store' => route('menu.store', ['restaurant' => $this->restaurant->slug]),
+                'update' => route('menu.update', ['restaurant' => $this->restaurant->slug, 'menu' => $this->id]),
+                'delete' => route('menu.destroy', ['restaurant' => $this->restaurant->slug, 'menu' => $this->id]),
+            ],
         ];
     }
 }

@@ -22,8 +22,8 @@ class UpdateRestaurantRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['nullable', 'required_without_all:description', "string", "max:50"],
-            'description' => ['nullable', 'required_without_all:name', "string", "max:50"],
+            'name' => ["unique:restaurants,name", "string", "max:50"],
+            'description' => ["string", "max:50"],
             'slug' => ["string", "required"],
         ];
     }
@@ -31,7 +31,7 @@ class UpdateRestaurantRequest extends FormRequest
     public function prepareForValidation() {
         if($this->name){
             $this->merge([
-             "slug" => str($this->name . uniqid())->slug()->value()
+             "slug" => str($this->name)->slug()->value()
             ]);
         }
     }

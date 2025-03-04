@@ -17,9 +17,13 @@ class MenuController extends Controller
 
         Gate::authorize("view", $restaurant);
 
-        $menu = $restaurant->menus()->paginate();
+        $menus = $restaurant->menus()
+            ->filter()
+            ->sort()
+            ->search(field: 'description')
+            ->paginate();
 
-        return jsonResponse(data:  new MenuCollection($menu), message: "OK", status: 200);
+        return jsonResponse(data:  new MenuCollection($menus), message: "OK", status: 200);
     }
 
     /**

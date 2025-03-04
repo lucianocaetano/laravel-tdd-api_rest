@@ -20,7 +20,7 @@ class AuthController extends Controller
         $token = Auth::attempt($credentials);
 
         if (!$token) {
-            return jsonResponse(errors: ["incorrect credentials"], status: 401);
+            return jsonResponse(errors: ["incorrect password"], status: 401);
         }
 
         return jsonResponse(data: ["token" => $token]);

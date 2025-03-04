@@ -15,11 +15,19 @@ class RestaurantCollection extends ResourceCollection
     {
         return [
             "restaurants" => $this->collection,
-            "total" => $this->total(),
-            "count" => $this->count(),
-            "per_page" => $this->perPage(),
-            "current_page" => $this->currentPage(),
-            "last_page" => $this->lastPage(),
+            'links' => [
+                'first' => $this->url(1),
+                'last' => $this->url($this->lastPage()),
+                'prev' => $this->previousPageUrl(),
+                'next' => $this->nextPageUrl(),
+            ],
+            'meta' => [
+                "total" => $this->total(),
+                "count" => $this->count(),
+                "per_page" => $this->perPage(),
+                "current_page" => $this->currentPage(),
+                "last_page" => $this->lastPage(),
+            ]
         ];
     }
 }

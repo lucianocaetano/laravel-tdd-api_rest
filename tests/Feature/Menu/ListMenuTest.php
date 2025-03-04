@@ -36,6 +36,7 @@ class ListMenuTest extends TestCase
     {
         $restaurant = Restaurant::first();
         $user = $restaurant->user;
+        $menus = $restaurant->menus()->paginate();
 
         $response = $this->apiAs($user, "get", $this->baseAPI . "/" . $restaurant->slug . "/menu");
 
@@ -52,36 +53,56 @@ class ListMenuTest extends TestCase
                         'slug',
                         'description',
                         'restaurant',
-                        'plates' => [
-                            '*' => [
-                                'id',
-                                'name',
-                                "description",
-                                "price",
-                                "image",
-                                "restaurant_id"
-                            ]
-                        ]
+                        'links' => [
+                            'self',
+                            'index',
+                            'store',
+                            'update',
+                            'delete',
+                        ],
                     ],
                 ],
-                "total",
-                "count",
-                "per_page",
-                "current_page",
-                "last_page",
+                'links' => [
+                    'first',
+                    'last',
+                    'prev',
+                    'next',
+                ],
+                'meta' => [
+                    "total",
+                    "count",
+                    "per_page",
+                    "current_page",
+                    "last_page",
+                ],
             ]
         ]);
-        $response->assertJsonPath("data.total", 15);
-        $response->assertJsonPath("data.count", 15);
-        $response->assertJsonPath("data.per_page", 15);
-        $response->assertJsonPath("data.current_page", 1);
-        $response->assertJsonPath("data.last_page", 1);
+
+        $response->assertJsonPath("data.meta.total", $menus->total());
+        $response->assertJsonPath("data.meta.count", $menus->count());
+        $response->assertJsonPath("data.meta.per_page", $menus->perPage());
+        $response->assertJsonPath("data.meta.current_page", $menus->currentPage());
+        $response->assertJsonPath("data.meta.last_page", $menus->lastPage());
+
+        $response->assertJsonPath('data.links.first', route('menu.index', ['restaurant' => $restaurant->slug, 'page' => 1]));
+        $response->assertJsonPath('data.links.last', route('menu.index', ['restaurant' => $restaurant->slug, 'page' => $menus->lastPage()]));
+        $prevPageUrl = $menus->currentPage() > 1 ? route('menu.index', ['restaurant' => $restaurant->slug, 'page' => $menus->currentPage() - 1]) : null;
+        $nextPageUrl = $menus->hasMorePages() ? route('menu.index', ['restaurant' => $restaurant->slug, 'page' => $menus->currentPage() + 1]) : null;
+        $response->assertJsonPath('data.links.prev', $prevPageUrl);
+        $response->assertJsonPath('data.links.next', $nextPageUrl);
+
+        $response->assertJsonPath('data.menus.0.links.self', route('menu.show', ['restaurant' => $restaurant->slug, 'menu' => $menus->first()->id]));
+        $response->assertJsonPath('data.menus.0.links.index', route('menu.index', ['restaurant' => $restaurant->slug]));
+        $response->assertJsonPath('data.menus.0.links.store', route('menu.store', ['restaurant' => $restaurant->slug]));
+        $response->assertJsonPath('data.menus.0.links.update', route('menu.update', ['restaurant' => $restaurant->slug, 'menu' => $menus->first()->id]));
+        $response->assertJsonPath('data.menus.0.links.delete', route('menu.destroy', ['restaurant' => $restaurant->slug, 'menu' => $menus->first()->id]));
     }
 
     public function test_list_menus_paginated_2(): void
     {
         $restaurant = Restaurant::first();
         $user = $restaurant->user;
+        $menus = $restaurant->menus()->paginate(15, ['*'], 'page', 2);
 
         $response = $this->apiAs($user, "get", $this->baseAPI . "/" . $restaurant->slug . "/menu?page=2");
 
@@ -89,7 +110,6 @@ class ListMenuTest extends TestCase
 
         $response->assertJsonFragment(["errors" => null]);
         $response->assertJsonFragment(["message" => "OK"]);
-
 
         $response->assertJsonStructure([
             'data' => [
@@ -99,31 +119,49 @@ class ListMenuTest extends TestCase
                         'slug',
                         'description',
                         'restaurant',
-                        'plates' => [
-                            '*' => [
-                                'id',
-                                'name',
-                                "description",
-                                "price",
-                                "image",
-                                "restaurant_id"
-                            ]
-                        ]
+                        'links' => [
+                            'self',
+                            'index',
+                            'store',
+                            'update',
+                            'delete',
+                        ],
                     ],
                 ],
-                "total",
-                "count",
-                "per_page",
-                "current_page",
-                "last_page",
+                'links' => [
+                    'first',
+                    'last',
+                    'prev',
+                    'next',
+                ],
+                'meta' => [
+                    "total",
+                    "count",
+                    "per_page",
+                    "current_page",
+                    "last_page",
+                ],
             ]
         ]);
 
-        $response->assertJsonPath("data.total", 15);
-        $response->assertJsonPath("data.count", 0);
-        $response->assertJsonPath("data.per_page", 15);
-        $response->assertJsonPath("data.current_page", 2);
-        $response->assertJsonPath("data.last_page", 1);
+        $response->assertJsonPath("data.meta.total", $menus->total());
+        $response->assertJsonPath("data.meta.count", $menus->count());
+        $response->assertJsonPath("data.meta.per_page", $menus->perPage());
+        $response->assertJsonPath("data.meta.current_page", $menus->currentPage());
+        $response->assertJsonPath("data.meta.last_page", $menus->lastPage());
+
+        $response->assertJsonPath('data.links.first', route('menu.index', ['restaurant' => $restaurant->slug, 'page' => 1]));
+        $response->assertJsonPath('data.links.last', route('menu.index', ['restaurant' => $restaurant->slug, 'page' => $menus->lastPage()]));
+        $prevPageUrl = $menus->currentPage() > 1 ? route('menu.index', ['restaurant' => $restaurant->slug, 'page' => $menus->currentPage() - 1]) : null;
+        $nextPageUrl = $menus->hasMorePages() ? route('menu.index', ['restaurant' => $restaurant->slug, 'page' => $menus->currentPage() + 1]) : null;
+        $response->assertJsonPath('data.links.prev', $prevPageUrl);
+        $response->assertJsonPath('data.links.next', $nextPageUrl);
+
+        $response->assertJsonPath('data.menus.0.links.self', route('menu.show', ['restaurant' => $restaurant->slug, 'menu' => $menus->first()->id]));
+        $response->assertJsonPath('data.menus.0.links.index', route('menu.index', ['restaurant' => $restaurant->slug]));
+        $response->assertJsonPath('data.menus.0.links.store', route('menu.store', ['restaurant' => $restaurant->slug]));
+        $response->assertJsonPath('data.menus.0.links.update', route('menu.update', ['restaurant' => $restaurant->slug, 'menu' => $menus->first()->id]));
+        $response->assertJsonPath('data.menus.0.links.delete', route('menu.destroy', ['restaurant' => $restaurant->slug, 'menu' => $menus->first()->id]));
     }
 
     public function test_you_are_not_the_owner_of_this_restaurant(): void
@@ -135,5 +173,4 @@ class ListMenuTest extends TestCase
 
         $response->assertStatus(403);
     }
-
 }

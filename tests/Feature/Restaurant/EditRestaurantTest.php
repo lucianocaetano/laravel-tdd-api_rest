@@ -17,7 +17,7 @@ class EditRestaurantTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->seed([RestaurantSeeder::class, UserSeeder::class]);
+        $this->seed([UserSeeder::class, RestaurantSeeder::class]);
     }
 
     protected $data = ["name" => "New Restaurant", "description" => "test description form New Restaurant"];
@@ -28,18 +28,24 @@ class EditRestaurantTest extends TestCase
         $restaurant = Restaurant::first();
         $user = $restaurant->user;
 
-        $response = $this->apiAs($user, "put", $this->baseAPI . '/restaurant/' . $restaurant->slug, $this->data);
+        $response = $this->apiAs($user, "patch", $this->baseAPI . '/restaurant/' . $restaurant->slug, $this->data);
 
         $response->assertStatus(200);
+        $response->assertJsonStructure(["message", "errors", "data" => ["restaurant" => ["name", "description", "slug", "user", 'links' => ['self', 'index', 'store', 'update', 'delete']]]]);
         $response->assertJsonFragment(["message" => "OK"]);
         $response->assertJsonFragment(["errors" => null]);
-        $response->assertJsonStructure(["message", "errors", "data" => ["restaurant" => ["name", "description", "slug", "user_id"]]]);
+
+        $response->assertJsonPath('data.restaurant.links.self', route('restaurant.show', ['restaurant' => str($this->data['name'])->slug()->value()]));
+        $response->assertJsonPath('data.restaurant.links.index', route('restaurant.index'));
+        $response->assertJsonPath('data.restaurant.links.store', route('restaurant.store'));
+        $response->assertJsonPath('data.restaurant.links.update', route('restaurant.update', str($this->data['name'])->slug()->value()));
+        $response->assertJsonPath('data.restaurant.links.delete', route('restaurant.destroy', str($this->data['name'])->slug()->value()));
     }
 
     public function test_edit_not_my_restaurant(): void
     {
-        $restaurant = Restaurant::first();
-        $user = User::where(["name" => "mauro"])->first();
+        $user = User::first();
+        $restaurant = Restaurant::whereNot('user_id', $user->id)->first();
 
         $response = $this->apiAs($user, "put", $this->baseAPI . '/restaurant/' . $restaurant->slug, $this->data);
 

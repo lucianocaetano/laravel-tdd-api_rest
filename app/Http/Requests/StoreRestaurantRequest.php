@@ -34,7 +34,7 @@ class StoreRestaurantRequest extends FormRequest
     protected function prepareForValidation(): void
     {
         $this->merge([
-            'slug' => Str::slug($this->get("name").' '.uniqid()),
+            'slug' => Str::slug($this->get("name")),
         ]);
     }
 }

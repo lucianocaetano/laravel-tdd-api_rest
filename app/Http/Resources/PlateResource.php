@@ -17,10 +17,18 @@ class PlateResource extends JsonResource
         return [
             "id" => $this->id,
             'name' => $this->name,
+            'slug' => $this->slug,
             'description' => $this->description,
             'price' => $this->price,
             'image' => $this->image,
-            'restaurant_id' => $this->restaurant->id,
+            'restaurant' => $this->restaurant->name,
+            'links' => [
+                'self' => route('plate.show', ['restaurant' => $this->restaurant->slug, 'plate' => $this->id]),
+                'index' => route('plate.index', ['restaurant' => $this->restaurant->slug]),
+                'store' => route('plate.store', ['restaurant' => $this->restaurant->slug]),
+                'update' => route('plate.update', ['restaurant' => $this->restaurant->slug, 'plate' => $this->id]),
+                'delete' => route('plate.destroy', ['restaurant' => $this->restaurant->slug, 'plate' => $this->id]),
+            ]
         ];
     }
 }

@@ -2,14 +2,15 @@
 
 namespace App\Models;
 
+use App\Traits\Filterable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Restaurant extends Model
 {
-    use HasFactory;
+    use HasFactory, Filterable;
 
-    protected $fillable= [
+    protected $fillable = [
         "name",
         "description",
         "slug",
@@ -21,15 +22,31 @@ class Restaurant extends Model
         return "slug";
     }
 
-    function user () {
+    function user()
+    {
         return $this->belongsTo(User::class);
     }
 
-    function plates(){
+    function plates()
+    {
         return $this->hasMany(Plate::class);
     }
 
-    function menus(){
+    function menus()
+    {
         return $this->hasMany(Menu::class);
     }
+
+    protected $filter_fields = [
+        "name",
+        "description",
+    ];
+
+    protected $sort_fields = [
+        "name",
+        "description",
+        "created_at",
+        "updated_at",
+        "id"
+    ];
 }

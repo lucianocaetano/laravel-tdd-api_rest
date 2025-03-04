@@ -16,7 +16,7 @@ class MenuSeeder extends Seeder
         $restaurants = Restaurant::all();
 
         foreach ($restaurants as $restaurant) {
-            Menu::factory(15)->create(
+            Menu::factory(30)->create(
                 [
                     "restaurant_id" => $restaurant->id,
                 ]

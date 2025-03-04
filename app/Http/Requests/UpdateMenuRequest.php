@@ -23,7 +23,7 @@ class UpdateMenuRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "name" => "string|max:255",
+            "name" => "unique:menus,name|string|max:255",
             "description" => "string|max:1000",
             "restaurant_id" => "exists:restaurants,id",
             "slug" => "string",
@@ -35,7 +35,7 @@ class UpdateMenuRequest extends FormRequest
     public function prepareForValidation() {
         if($this->name){
             $this->merge([
-             "slug" => str($this->name . uniqid())->slug()->value()
+             "slug" => str($this->name)->slug()->value()
             ]);
         }
     }

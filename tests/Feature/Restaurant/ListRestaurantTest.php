@@ -25,7 +25,7 @@ class ListRestaurantTest extends TestCase
         $this->seed(UserSeeder::class);
 
         Restaurant::factory(5)->create([
-            "user_id" => User::first()->id // es el usuario que se creo con los seeder
+            "user_id" => User::first()->id
         ]);
     }
 
@@ -34,23 +34,65 @@ class ListRestaurantTest extends TestCase
     public function test_list_my_restaurants(): void
     {
         $user = User::where(["name" => "mauro"])->first();
-        $restaurants = $user->restaurants;
+        $restaurants = $user->restaurants()->paginate();
 
         $response = $this->apiAs($user, "get", $this->baseAPI . '/restaurant');
 
         $response->assertStatus(200);
-        $response->assertJsonStructure(["message", "errors", "data"]);
+        $response->assertJsonStructure([
+            'data' => [
+                'restaurants' => [
+                    '*' => [
+                        'name',
+                        'description',
+                        'slug',
+                        'user',
+                        'links' => [
+                            'self',
+                            'index',
+                            'store',
+                            'update',
+                            'delete',
+                        ],
+                    ],
+                ],
+                'links' => [
+                    'first',
+                    'last',
+                    'prev',
+                    'next',
+                ],
+                'meta' => [
+                    'current_page',
+                    'last_page',
+                    'per_page',
+                    'total',
+                ],
+            ],
+            'message',
+            'errors',
+        ]);
+
         $response->assertJsonFragment(["errors" => null]);
         $response->assertJsonFragment(["message" => "OK"]);
-        $response->assertJsonFragment(["data" => [
-                "restaurants" => RestaurantResource::collection($restaurants)->resolve(),
-                "count" => 5,
-                "current_page" => 1,
-                "last_page" => 1,
-                "per_page" => 15,
-                "total" => 5
-            ]
-        ]);
-    }
 
+        $response->assertJsonPath('data.meta.count', 5);
+        $response->assertJsonPath('data.meta.current_page', 1);
+        $response->assertJsonPath('data.meta.last_page', 1);
+        $response->assertJsonPath('data.meta.per_page', 15);
+        $response->assertJsonPath('data.meta.total', 5);
+
+        $response->assertJsonPath('data.links.first', route('restaurant.index', ['page' => 1]));
+        $response->assertJsonPath('data.links.last', route('restaurant.index', ['page' => $restaurants->lastPage()]));
+        $prevPageUrl = $restaurants->currentPage() > 1 ? route('restaurant.index', ['page' => $restaurants->currentPage() - 1]) : null;
+        $nextPageUrl = $restaurants->hasMorePages() ? route('restaurant.index', ['page' => $restaurants->currentPage() + 1]) : null;
+        $response->assertJsonPath('data.links.prev', $prevPageUrl);
+        $response->assertJsonPath('data.links.next', $nextPageUrl);
+
+        $response->assertJsonPath('data.restaurants.0.links.self', route('restaurant.show', ['restaurant' => $restaurants->first()->slug]));
+        $response->assertJsonPath('data.restaurants.0.links.index', route('restaurant.index'));
+        $response->assertJsonPath('data.restaurants.0.links.store', route('restaurant.store'));
+        $response->assertJsonPath('data.restaurants.0.links.update', route('restaurant.update', $restaurants->first()->slug));
+        $response->assertJsonPath('data.restaurants.0.links.delete', route('restaurant.destroy', $restaurants->first()->slug));
+    }
 }
