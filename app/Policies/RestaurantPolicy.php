@@ -21,7 +21,9 @@ class RestaurantPolicy
      */
     public function view(User $user, Restaurant $restaurant): bool
     {
+
         return $user->id == $restaurant->user_id;
+
     }
 
     /**
@@ -29,7 +31,11 @@ class RestaurantPolicy
      */
     public function create(User $user): bool
     {
-        //
+        if($user->can('UPDATE_RESTAURANT')){
+            return true;
+        }else{
+            return false;
+        }
     }
 
     /**
@@ -37,7 +43,11 @@ class RestaurantPolicy
      */
     public function update(User $user, Restaurant $restaurant): bool
     {
-        return $user->id == $restaurant->user_id;
+        if($user->can('UPDATE_RESTAURANT')){
+            return $user->id == $restaurant->user_id;
+        }else {
+            return false;
+        }
     }
 
     /**
@@ -45,7 +55,11 @@ class RestaurantPolicy
      */
     public function delete(User $user, Restaurant $restaurant): bool
     {
-        return $user->id == $restaurant->user_id;
+        if($user->can('DELETE_RESTAURANT')){
+            return $user->id == $restaurant->user_id;
+        }else {
+            return false;
+        }
     }
 
     /**

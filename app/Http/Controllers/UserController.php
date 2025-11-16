@@ -7,13 +7,6 @@ use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
 
     /**
      * Display the specified resource.
@@ -50,7 +43,7 @@ class UserController extends Controller
      */
     public function destroy(Request $request)
     {
-        $user = $request->user()->delete();
+        $request->user()->delete();
 
         return jsonResponse(message: "OK");
     }

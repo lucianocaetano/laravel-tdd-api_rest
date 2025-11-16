@@ -2,8 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\Enums\Roles;
 use App\Models\Restaurant;
 use App\Models\User;
+use Database\Seeders\PermissionSeeder;
+use Database\Seeders\RoleSeeder;
 use Database\Seeders\UserSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -13,23 +16,34 @@ class AdminTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected $user, $restaurant;
+
     function setUp(): void
     {
         parent::setUp();
 
+        $this->seed([
+            PermissionSeeder::class,
+            RoleSeeder::class
+        ]);
+
         $user = User::factory()->create();
 
-        $user->assignRole('admin');
+        $user->assignRole(Roles::ADMIN->value);
 
-        Restaurant::factory()->create();
+        $restaurant = Restaurant::factory()->create();
+
+        $this->user = $user;
+
+        $this->restaurant = $restaurant;
     }
 
     protected $baseAPI = "/api/v1";
 
     public function test_admin_user_can_delete_any_restaurants(): void
     {
-        $restaurant = Restaurant::first();
-        $user = User::where(["email" => "lucianocaetano@gmail.com"])->first();
+        $restaurant = $this->restaurant;
+        $user = $this->user;
 
         $response = $this->apiAs($user, "delete", $this->baseAPI . '/restaurant/' . $restaurant->slug);
 

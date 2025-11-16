@@ -4,6 +4,8 @@ namespace Tests\Feature\Restaurant;
 
 use App\Models\Restaurant;
 use App\Models\User;
+use Database\Seeders\PermissionSeeder;
+use Database\Seeders\RoleSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -17,6 +19,11 @@ class SortRestaurantTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+
+        $this->seed([
+            PermissionSeeder::class,
+            RoleSeeder::class,
+        ]);
 
         $this->user = User::factory()->create(
             [

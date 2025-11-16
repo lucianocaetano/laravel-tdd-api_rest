@@ -5,7 +5,9 @@ namespace Tests\Feature\Plate;
 use App\Http\Resources\PlateResource;
 use App\Models\Restaurant;
 use App\Models\User;
+use Database\Seeders\PermissionSeeder;
 use Database\Seeders\PlateSeeder;
+use Database\Seeders\RoleSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -17,19 +19,29 @@ class ListPlateTest extends TestCase
      */
     use RefreshDatabase;
 
+    protected $restaurant;
+
     function setUp(): void
     {
         parent::setUp();
 
-        Restaurant::factory()->create();
-        $this->seed(PlateSeeder::class);
+        $this->seed([
+            PermissionSeeder::class,
+            RoleSeeder::class,
+        ]);
+
+        $this->restaurant = Restaurant::factory()->create();
+
+        $this->seed(
+            PlateSeeder::class
+        );
     }
 
     protected $baseAPI = "api/v1";
 
     public function test_list_my_plates(): void
     {
-        $restaurant = Restaurant::first();
+        $restaurant = $this->restaurant;
         $user = $restaurant->user;
         $plates = $restaurant->plates()->paginate();
 

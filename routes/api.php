@@ -5,6 +5,7 @@ use App\Http\Controllers\MenuController;
 use App\Http\Controllers\PlateController;
 use App\Http\Controllers\RestaurantController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(["guest"])->prefix("/auth")->group(function () {
@@ -21,6 +22,12 @@ Route::middleware(["auth"])->group(function () {
         Route::delete("/remove", [UserController::class, "destroy"])->name("remove");
         Route::get("/me", [AuthController::class, "me"])->name("me");
     })->name("user.");
+
+
+    // api admin dashboard
+    Route::name('dashboard.')->prefix('/dashboard')->group(function () {
+        Route::apiResource("/users", AdminUserController::class);
+    });
 
     // api restaurant
     Route::apiResource("/restaurant", RestaurantController::class);

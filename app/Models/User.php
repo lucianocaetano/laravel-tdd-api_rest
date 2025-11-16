@@ -3,14 +3,49 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use App\Enums\Roles;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Contracts\Permission;
+use Spatie\Permission\Traits\HasRoles;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+
+
+/**
+ *  @OA\Schema(
+ *      required={"name", "last_name", "email", "password"},
+ *      @OA\Property(
+ *          property="name",
+ *          type="string",
+ *          description="Name of the user",
+ *          default="Mauro",
+ *      ),
+ *      @OA\Property(
+ *          property="last_name",
+ *          type="string",
+ *          description="Last name of the user",
+ *          default="Mauro",
+ *      ),
+ *      @OA\Property(
+ *          property="email",
+ *          type="string",
+ *          description="Email of the user",
+ *          default="dDl0U@example.com",
+ *      ),
+ *      @OA\Property(
+ *          property="password",
+ *          type="string",
+ *          description="Password of the user",
+ *          default="password",
+ *      ),
+ *  )
+ */
 
 class User extends Authenticatable implements JWTSubject
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -69,6 +104,26 @@ class User extends Authenticatable implements JWTSubject
      */
     public function getJWTCustomClaims()
     {
-        return [];
+        return [
+            'roles' => $this->getRoleNames(),
+            'permissions' => $this->hasRole(Roles::ADMIN->value) ? 'all': $this->getPermissionNames()
+        ];
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        self::created(function ($user) {
+            if(!$user->getRoleNames()->count()){
+                $user->assignRole(Roles::USER->value);
+
+                $user->givePermissionTo(
+                    "DELETE_RESTAURANT",
+                    "UPDATE_RESTAURANT",
+                    "STORE_RESTAURANT"
+                );
+            }
+        });
     }
 }

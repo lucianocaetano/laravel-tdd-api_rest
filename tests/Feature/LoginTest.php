@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use Database\Seeders\PermissionSeeder;
+use Database\Seeders\RoleSeeder;
 use Database\Seeders\UserSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -10,10 +12,14 @@ use Tests\TestCase;
 class LoginTest extends TestCase
 {
     use RefreshDatabase;
-    
+
     protected function setUp(): void {
         parent::setUp();
-        $this->seed(UserSeeder::class);
+        $this->seed([
+            PermissionSeeder::class,
+            RoleSeeder::class,
+            UserSeeder::class
+        ]);
     }
 
     protected $baseAPI = "api/v1/auth/";

@@ -6,8 +6,10 @@ use App\Models\Menu;
 use App\Models\Restaurant;
 use App\Models\User;
 use Database\Seeders\MenuSeeder;
+use Database\Seeders\PermissionSeeder;
 use Database\Seeders\PlateSeeder;
 use Database\Seeders\RestaurantSeeder;
+use Database\Seeders\RoleSeeder;
 use Database\Seeders\UserSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -22,6 +24,8 @@ class EditMenuTest extends TestCase
         parent::setUp();
 
         $this->seed([
+            PermissionSeeder::class,
+            RoleSeeder::class,
             UserSeeder::class,
             RestaurantSeeder::class,
             PlateSeeder::class,

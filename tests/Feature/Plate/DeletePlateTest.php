@@ -5,8 +5,10 @@ namespace Tests\Feature\Plate;
 use App\Models\Plate;
 use App\Models\Restaurant;
 use App\Models\User;
+use Database\Seeders\PermissionSeeder;
 use Database\Seeders\PlateSeeder;
 use Database\Seeders\RestaurantSeeder;
+use Database\Seeders\RoleSeeder;
 use Database\Seeders\UserSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -22,7 +24,13 @@ class DeletePlateTest extends TestCase
     function setUp(): void {
         parent::setUp();
 
-        $this->seed([RestaurantSeeder::class ,PlateSeeder::class, UserSeeder::class]);
+        $this->seed([
+            PermissionSeeder::class,
+            RoleSeeder::class,
+            RestaurantSeeder::class,
+            PlateSeeder::class,
+            UserSeeder::class
+        ]);
     }
 
     public $baseAPI = "/api/v1";

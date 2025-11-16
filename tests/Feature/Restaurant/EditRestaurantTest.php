@@ -4,7 +4,9 @@ namespace Tests\Feature\Restaurant;
 
 use App\Models\Restaurant;
 use App\Models\User;
+use Database\Seeders\PermissionSeeder;
 use Database\Seeders\RestaurantSeeder;
+use Database\Seeders\RoleSeeder;
 use Database\Seeders\UserSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -17,7 +19,12 @@ class EditRestaurantTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->seed([UserSeeder::class, RestaurantSeeder::class]);
+        $this->seed([
+            PermissionSeeder::class,
+            RoleSeeder::class,
+            UserSeeder::class,
+            RestaurantSeeder::class
+        ]);
     }
 
     protected $data = ["name" => "New Restaurant", "description" => "test description form New Restaurant"];
@@ -31,6 +38,7 @@ class EditRestaurantTest extends TestCase
         $response = $this->apiAs($user, "patch", $this->baseAPI . '/restaurant/' . $restaurant->slug, $this->data);
 
         $response->assertStatus(200);
+
         $response->assertJsonStructure(["message", "errors", "data" => ["restaurant" => ["name", "description", "slug", "user", 'links' => ['self', 'index', 'store', 'update', 'delete']]]]);
         $response->assertJsonFragment(["message" => "OK"]);
         $response->assertJsonFragment(["errors" => null]);

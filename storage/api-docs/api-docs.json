@@ -1,0 +1,696 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "restaurant api",
+        "description": "Restaurants API",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/v1/auth/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Login",
+                "operationId": "4e912be1c5b00c9c7ba0f19232afb2d2",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "admin@gmail.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "admin"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "properties": {
+                                                "token": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "errors": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "default": "incorrect credentials"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/register": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Login",
+                "operationId": "ff453d9fb9aefb5fed6256f56b6f3fc3",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password",
+                                    "name"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "default": "admin2@gmail.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "default": "admin"
+                                    },
+                                    "name": {
+                                        "type": "string",
+                                        "format": "name",
+                                        "default": "admin2"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "properties": {
+                                                "token": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/logout": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Logout",
+                "operationId": "c4eddaf1a2e990cc90e4326c0d731d41",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "OK"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/change_password": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Change Password",
+                "operationId": "ddf59803d9db5cab79e33e5ef3551123",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "OK"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "errors": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "default": "incorrect credentials"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/restaurant": {
+            "get": {
+                "tags": [
+                    "Restaurants"
+                ],
+                "summary": "Get a list restaurants",
+                "operationId": "7a110d3d9aaf2c008e33edbb3160007d",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "properties": {
+                                                "restaurants": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Prof. Albert Rolfson DDS"
+                                                            },
+                                                            "description": {
+                                                                "type": "string",
+                                                                "example": "Ipsam totam officia incidunt alias quam et quos. Quisquam culpa est ut. Repellendus accusantium quis quia doloribus."
+                                                            },
+                                                            "slug": {
+                                                                "type": "string",
+                                                                "example": "prof-albert-rolfson-dds"
+                                                            },
+                                                            "user": {
+                                                                "type": "string",
+                                                                "example": "admin"
+                                                            },
+                                                            "links": {
+                                                                "properties": {
+                                                                    "self": {
+                                                                        "type": "string",
+                                                                        "format": "uri",
+                                                                        "example": "http://127.0.0.1:8000/api/v1/restaurant/prof-albert-rolfson-dds"
+                                                                    },
+                                                                    "index": {
+                                                                        "type": "string",
+                                                                        "format": "uri",
+                                                                        "example": "http://127.0.0.1:8000/api/v1/restaurant"
+                                                                    },
+                                                                    "store": {
+                                                                        "type": "string",
+                                                                        "format": "uri",
+                                                                        "example": "http://127.0.0.1:8000/api/v1/restaurant"
+                                                                    },
+                                                                    "update": {
+                                                                        "type": "string",
+                                                                        "format": "uri",
+                                                                        "example": "http://127.0.0.1:8000/api/v1/restaurant/prof-albert-rolfson-dds"
+                                                                    },
+                                                                    "delete": {
+                                                                        "type": "string",
+                                                                        "format": "uri",
+                                                                        "example": "http://127.0.0.1:8000/api/v1/restaurant/prof-albert-rolfson-dds"
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "apiAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Restaurants"
+                ],
+                "summary": "Store a restaurant",
+                "operationId": "3c46849c7ff8b8ea3de8bd311671d156",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "description"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Prof. Albert Rolfson DDS"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Ipsam totam officia incidunt alias quam et quos."
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "properties": {
+                                                "restaurant": {
+                                                    "properties": {
+                                                        "name": {
+                                                            "type": "string",
+                                                            "example": "Prof. Albert Rolfson DDS"
+                                                        },
+                                                        "description": {
+                                                            "type": "string",
+                                                            "example": "Ipsam totam officia incidunt alias quam et quos. Quisquam culpa est ut. Repellendus accusantium quis quia doloribus."
+                                                        },
+                                                        "slug": {
+                                                            "type": "string",
+                                                            "example": "prof-albert-rolfson-dds"
+                                                        },
+                                                        "user": {
+                                                            "type": "string",
+                                                            "example": "admin"
+                                                        },
+                                                        "links": {
+                                                            "properties": {
+                                                                "self": {
+                                                                    "type": "string",
+                                                                    "format": "uri",
+                                                                    "example": "http://127.0.0.1:8000/api/v1/restaurant/prof-albert-rolfson-dds"
+                                                                },
+                                                                "index": {
+                                                                    "type": "string",
+                                                                    "format": "uri",
+                                                                    "example": "http://127.0.0.1:8000/api/v1/restaurant"
+                                                                },
+                                                                "store": {
+                                                                    "type": "string",
+                                                                    "format": "uri",
+                                                                    "example": "http://127.0.0.1:8000/api/v1/restaurant"
+                                                                },
+                                                                "update": {
+                                                                    "type": "string",
+                                                                    "format": "uri",
+                                                                    "example": "http://127.0.0.1:8000/api/v1/restaurant/prof-albert-rolfson-dds"
+                                                                },
+                                                                "delete": {
+                                                                    "type": "string",
+                                                                    "format": "uri",
+                                                                    "example": "http://127.0.0.1:8000/api/v1/restaurant/prof-albert-rolfson-dds"
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "apiAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/restaurant/{restaurant}": {
+            "get": {
+                "tags": [
+                    "Restaurants"
+                ],
+                "summary": "Get a restaurant",
+                "operationId": "49ced671915de6760614454a0ec6c020",
+                "parameters": [
+                    {
+                        "name": "restaurant",
+                        "in": "path",
+                        "description": "slug restaurant",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "name-slug"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Show restaurant",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "properties": {
+                                                "restaurant": {
+                                                    "properties": {
+                                                        "name": {
+                                                            "type": "string",
+                                                            "example": "Prof. Albert Rolfson DDS"
+                                                        },
+                                                        "description": {
+                                                            "type": "string",
+                                                            "example": "Ipsam totam officia incidunt alias quam et quos. Quisquam culpa est ut."
+                                                        },
+                                                        "slug": {
+                                                            "type": "string",
+                                                            "example": "prof-albert-rolfson-dds"
+                                                        },
+                                                        "user": {
+                                                            "type": "string",
+                                                            "example": "admin"
+                                                        },
+                                                        "links": {
+                                                            "properties": {
+                                                                "self": {
+                                                                    "type": "string",
+                                                                    "format": "uri",
+                                                                    "example": "http://127.0.0.1:8000/api/v1/restaurant/prof-albert-rolfson-dds"
+                                                                },
+                                                                "index": {
+                                                                    "type": "string",
+                                                                    "format": "uri",
+                                                                    "example": "http://127.0.0.1:8000/api/v1/restaurant"
+                                                                },
+                                                                "store": {
+                                                                    "type": "string",
+                                                                    "format": "uri",
+                                                                    "example": "http://127.0.0.1:8000/api/v1/restaurant"
+                                                                },
+                                                                "update": {
+                                                                    "type": "string",
+                                                                    "format": "uri",
+                                                                    "example": "http://127.0.0.1:8000/api/v1/restaurant/prof-albert-rolfson-dds"
+                                                                },
+                                                                "delete": {
+                                                                    "type": "string",
+                                                                    "format": "uri",
+                                                                    "example": "http://127.0.0.1:8000/api/v1/restaurant/prof-albert-rolfson-dds"
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "apiAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/restaurant/{id}": {
+            "put": {
+                "tags": [
+                    "Restaurants"
+                ],
+                "summary": "Updated a restaurant",
+                "operationId": "87c0c24c784026a3f3aefdfb13c9c1a6",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID the restaurant",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Show restaurant",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "properties": {
+                                                "restaurant": {
+                                                    "$ref": "#/components/schemas/Restaurant"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "apiAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Restaurants"
+                ],
+                "summary": "Destroy a restaurant",
+                "operationId": "31c2631caf5d1e75d97ac966983fcd9e",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID the restaurant",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "delete",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "OK"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "apiAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Restaurant": {
+                "required": [
+                    "name",
+                    "description",
+                    "slug",
+                    "user_id"
+                ],
+                "properties": {
+                    "name": {
+                        "description": "Name of the restaurant",
+                        "type": "string",
+                        "default": "My Restaurant"
+                    },
+                    "description": {
+                        "description": "Description of the restaurant",
+                        "type": "string",
+                        "default": "My description"
+                    },
+                    "slug": {
+                        "description": "Slug of the restaurant",
+                        "type": "string",
+                        "default": "my-restaurant"
+                    },
+                    "user_id": {
+                        "description": "ID of the user",
+                        "type": "integer",
+                        "default": 1
+                    }
+                },
+                "type": "object"
+            },
+            "User": {
+                "required": [
+                    "name",
+                    "last_name",
+                    "email",
+                    "password"
+                ],
+                "properties": {
+                    "name": {
+                        "description": "Name of the user",
+                        "type": "string",
+                        "default": "Mauro"
+                    },
+                    "last_name": {
+                        "description": "Last name of the user",
+                        "type": "string",
+                        "default": "Mauro"
+                    },
+                    "email": {
+                        "description": "Email of the user",
+                        "type": "string",
+                        "default": "dDl0U@example.com"
+                    },
+                    "password": {
+                        "description": "Password of the user",
+                        "type": "string",
+                        "default": "password"
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "apiAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT",
+                "description": "Enter token in format (Bearer &lt;token&gt;)"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Auth",
+            "description": "Auth"
+        },
+        {
+            "name": "Restaurants",
+            "description": "Restaurants"
+        }
+    ]
+}

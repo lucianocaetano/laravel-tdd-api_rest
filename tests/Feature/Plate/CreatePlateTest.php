@@ -3,7 +3,9 @@
 namespace Tests\Feature\Plate;
 
 use App\Models\Restaurant;
+use Database\Seeders\PermissionSeeder;
 use Database\Seeders\RestaurantSeeder;
+use Database\Seeders\RoleSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -19,7 +21,11 @@ class CreatePlateTest extends TestCase
     {
         parent::setUp();
 
-        $this->seed(RestaurantSeeder::class);
+        $this->seed([
+            PermissionSeeder::class,
+            RoleSeeder::class,
+            RestaurantSeeder::class
+        ]);
     }
 
     protected $baseAPI = "api/v1";
@@ -63,7 +69,7 @@ class CreatePlateTest extends TestCase
         ]);
 
         $plate = $response->json()['data']['plate'];
-        
+
         $response->assertJsonPath('data.plate.links.self', route('plate.show', ['restaurant' => $restaurant->slug, 'plate' => $plate["id"]]));
         $response->assertJsonPath('data.plate.links.index', route('plate.index', ['restaurant' => $restaurant->slug]));
         $response->assertJsonPath('data.plate.links.store', route('plate.store', ['restaurant' => $restaurant->slug]));

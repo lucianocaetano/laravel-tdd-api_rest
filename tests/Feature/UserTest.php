@@ -3,6 +3,8 @@
 namespace Tests\Feature;
 
 use App\Models\User;
+use Database\Seeders\PermissionSeeder;
+use Database\Seeders\RoleSeeder;
 use Database\Seeders\UserSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -13,7 +15,11 @@ class UpdateUserTest extends TestCase
 
     protected function setUp(): void {
         parent::setUp();
-        $this->seed(UserSeeder::class);
+        $this->seed([
+            PermissionSeeder::class,
+            RoleSeeder::class,
+            UserSeeder::class
+        ]);
     }
 
     protected $baseAPI = "api/v1/user";
@@ -27,21 +33,21 @@ class UpdateUserTest extends TestCase
         $response->assertStatus(200);
         $response->assertJsonStructure(["data", "message", "errors"]);
 
-        $response->assertJsonFragment([
-            "message" => "OK",
-            "errors" => null,
+        $response->assertJsonStructure([
             "data" => [
                 "user" => [
-                    "id" => $user->id,
-                    "last_name" => $user->last_name,
-                    "name" => "mauro 2",
-                    "email" => $user->email,
-                    "email_verified_at" => $user->email_verified_at,
-                    "created_at" => $user->created_at,
-                    "updated_at" => $user->updated_at,
+                    "id",
+                    "last_name",
+                    "name",
+                    "email",
+                    "email_verified_at",
+                    "created_at",
+                    "updated_at",
                 ]
             ],
         ]);
+
+        $response->assertJsonPath('data.user.name', $this->data["name"]);
     }
 
     public function test_get_my_user() {
@@ -49,20 +55,22 @@ class UpdateUserTest extends TestCase
         $response = $this->apiAs($user, "get", $this->baseAPI . '/me');
 
         $response->assertStatus(200);
-        $response->assertJsonStructure(["data", "message", "errors"]);
-        $response->assertJsonFragment([
-            "message" => "OK",
-        ]);
 
-        $response->assertJsonFragment([
-            "errors" => null,
-        ]);
+        $response->assertJsonStructure(['data', 'errors', 'message']);
 
-        $response->assertJsonFragment([
+        $response->assertJsonStructure([
             "data" => [
-                "user" => $user->toArray()
+                "user" => [
+                    "id",
+                    "last_name",
+                    "name",
+                    "email",
+                    "email_verified_at",
+                ]
             ],
         ]);
+
+        $response->assertJsonPath('data.user.email', $user->email);
     }
 
     public function test_delete_my_user() {

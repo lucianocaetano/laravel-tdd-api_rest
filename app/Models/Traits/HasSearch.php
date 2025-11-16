@@ -1,8 +1,8 @@
 <?php
 
-namespace \App\Models\Traits;
+namespace App\Models\Traits;
 
-trait HasSearch 
+trait HasSearch
 {
 
     public function searchFields()

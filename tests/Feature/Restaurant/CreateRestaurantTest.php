@@ -3,6 +3,8 @@
 namespace Tests\Feature\Restaurant;
 
 use App\Models\User;
+use Database\Seeders\PermissionSeeder;
+use Database\Seeders\RoleSeeder;
 use Database\Seeders\UserSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -15,7 +17,11 @@ class CreateRestaurantTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->seed(UserSeeder::class);
+        $this->seed([
+            PermissionSeeder::class,
+            RoleSeeder::class,
+            UserSeeder::class
+        ]);
     }
 
     protected $data = ["name" => "New Restaurant", "description" => "test description form New Restaurant"];

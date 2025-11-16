@@ -2,7 +2,8 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
+use Database\Seeders\PermissionSeeder;
+use Database\Seeders\RoleSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -10,14 +11,24 @@ use Tests\TestCase;
 class RegisterTest extends TestCase
 {
     use RefreshDatabase;
-    
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->seed([
+            PermissionSeeder::class,
+            RoleSeeder::class
+        ]);
+    }
+
     protected $baseAPI = "api/v1/auth/";
     protected $data = ["name" => "mauro", "email" => "lucianocaetano@gmail.com", "password" => "password123"];
-   
+
     public function test_an_auth(): void
     {
         $response = $this->postJson($this->baseAPI.'register/', $this->data);
-        
+
         $response->assertStatus(201);
         $response->assertJsonStructure(["data" => ["token"]]);
     }
